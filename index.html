@@ -6,7 +6,7 @@
 		<meta charset="UTF-8">
 		<meta name="author" content="Alvin Abitria">
 		<meta name="description" content="Web page for testing printer wireless communication">
-		<link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
 		<script src='https://code.jquery.com/jquery-3.5.1.min.js'></script>
 		<script>
 		
@@ -43,58 +43,6 @@
 				console.log("Agent URL entered is: " + agentURL );
 			}
 
-			function hexStrToBytes(str) {
-				var start = "45 41 20 42 43 1D";
-				var end = str.split(" ");
-				var i;
-				var bytes = "";
-				var hex;
-				//console.log(i);
-				for (i = 0; i < end.length; i++) {
-					//hex = String.fromCharCode(end[i]);
-					bytes += String.fromCharCode(parseInt(end[i], 16));
-					//bytes.push(parseInt(end[i], 16));
-				}
-				//console.log(bytes.length);
-				return bytes
-			}
-			
-			function sendRaw(form) {
-				var allowedOnly = /^[0-9A-Fa-f /]+$/
-				var binaryBytes;
-				if (form.bytesInput.value.match(allowedOnly))
-				{
-					//settingsQrCode.plaintext = form.plainTextInput.value;
-					//console.log(JSON.stringify(settingsQrCode));
-					//sendQr(settingsQrCode);
-					//settingsRaw.bytes = hexStrToBytes(form.bytesInput.value);
-					//settingsRaw.length = settingsRaw.bytes.length;
-					binaryBytes = hexStrToBytes(form.bytesInput.value);
-					//console.log(settingsRaw.bytes);
-					//console.log(settingsRaw.bytes.length);
-					
-					// before getting encoded as JSON, encode as Base64
-					var blb = new Blob([binaryBytes], {type : 'url'});
-					var reader = new FileReader();
-					//var b;
-					
-					reader.readAsDataURL(blb);
-					reader.onloadend = function() {
-						var base64data = reader.result;
-						//b = reader.result;
-						console.log(base64data);
-					}					
-					//console.log(b);
-					//console.log(settingsRaw.bytes.length);
-
-					//sendRawData(settingsRaw);
-				}
-				else
-				{
-					alert("Invalid characters detected.  It could be lower case letters or special characters.  Please try again.");
-				}
-			}
-			
 			function sendPrint(form) {
 
 				if (agentURL.length == 0) {
@@ -106,7 +54,7 @@
 				//console.log(wordwrap(form.textInput.value, 32, "\n\r", true));
 				settings.text = wordwrap(form.textInput.value, 32, "\n\r", true);
 				//console.log(settings.text);
-				settings.underline = false;
+				//settings.underline = false;
 				//settings.alignment = "center";
 				console.log(JSON.stringify(settings));
 				
@@ -161,11 +109,11 @@
 				});
 			}
 
-			function sendRawData(settings){
+			function sendImg(settings){
 				$.ajax({
 					async: true,
 					type: "POST",
-					url : agentURL + '/raw',
+					url : agentURL + '/image',
 					data: JSON.stringify(settings),
 					dataType: "json",
 					success : function(response) {
@@ -176,7 +124,7 @@
 					}
 				});
 			}
-
+			
 			function sendQrCode(form) {
 				if (agentURL.length == 0) {
 					alert("Enter Agent URL before proceeding.");
@@ -223,6 +171,7 @@
 			function sendImgPrint() {
 				// This is where our image interface with agent will be prepared and submitted
 				console.log("Printing PCI logo.");
+				sendImg(settings);
 			}
 			
 			function wordWrapper(str, width, spaceReplacer) {
@@ -302,7 +251,7 @@
 			
 			function toggleUnderline() {
 				settings.underline = !settings.underline;
-				console.log("Set Underline to " + settings.bold);
+				console.log("Set Underline to " + settings.underline);
 			}
 
 			/*function toggleDeleteln() {
@@ -394,17 +343,6 @@
 			</form>
 			<br>
 			<br>
-			<h3>Send RAW Bytes</h2> 
-			<br>
-			<form>
-				<div>
-					<label for="text4">Type individual hex bytes separated by space<br>
-					<input type="text" id="text4" name="bytesInput" placeholder="00 00" style="width: 250px;" maxlength=512><br>
-					<input type="button" id="Button5" onClick="sendRaw(this.form)" value="SEND RAW BYTES">
-				</div>
-			
-			</form>
-	
 		</div>
 		<br>
 		<div>
